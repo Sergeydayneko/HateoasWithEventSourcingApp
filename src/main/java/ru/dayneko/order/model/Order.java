@@ -27,8 +27,8 @@ public class Order extends AbstractAggregateRoot {
 	private Status status;
 
 	@OrderColumn
-	@Column(unique = true) //
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) //
+	@Column(unique = true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<LineItem> lineItems = new ArrayList<>();
 
 	public Order(Collection<LineItem> lineItems, Location location) {
@@ -41,10 +41,6 @@ public class Order extends AbstractAggregateRoot {
 
 	public Order(LineItem... items) {
 		this(List.of(items), null);
-	}
-
-	Order() {
-		this(new LineItem[0]);
 	}
 
 	public MonetaryAmount getPrice() {
