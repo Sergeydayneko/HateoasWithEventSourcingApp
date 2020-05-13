@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Repository interface to manage {@link Payment} instances.
  */
-interface PaymentRepository extends PagingAndSortingRepository<Payment, Long> {
+public interface PaymentRepository extends PagingAndSortingRepository<Payment, Long> {
 
 	Optional<Payment> findByOrder(Order order);
 }
