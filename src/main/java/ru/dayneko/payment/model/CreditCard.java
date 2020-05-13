@@ -10,8 +10,6 @@ import java.time.Year;
 
 /**
  * Abstraction of a credit card.
- *
- * @author Oliver Gierke
  */
 @Entity
 @ToString(callSuper = true)
