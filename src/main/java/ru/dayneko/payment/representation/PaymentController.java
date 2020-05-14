@@ -2,7 +2,6 @@ package ru.dayneko.payment.representation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.*;
-import org.springframework.data.repository.support.DomainClassConverter;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.ExposesResourceFor;
@@ -16,7 +15,6 @@ import ru.dayneko.payment.model.CreditCard;
 import ru.dayneko.payment.model.CreditCardNumber;
 import ru.dayneko.payment.model.Payment;
 import ru.dayneko.payment.service.PaymentService;
-
 import javax.money.MonetaryAmount;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

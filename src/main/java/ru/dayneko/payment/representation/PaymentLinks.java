@@ -19,12 +19,12 @@ import static ru.dayneko.config.Constants.CURIE_NAMESPACE;
  * Helper component to create links to the {@link Payment} and {@link Payment.Receipt}.
  */
 @Component
-class PaymentLinks {
+public class PaymentLinks {
 
 	static final String PAYMENT = "/payment";
 	static final String RECEIPT = "/receipt";
-	static final LinkRelation PAYMENT_REL = HalLinkRelation.curied(CURIE_NAMESPACE, "payment");
-	static final LinkRelation RECEIPT_REL = HalLinkRelation.curied(CURIE_NAMESPACE, "receipt");
+	private static final LinkRelation PAYMENT_REL = HalLinkRelation.curied(CURIE_NAMESPACE, "payment");
+	private static final LinkRelation RECEIPT_REL = HalLinkRelation.curied(CURIE_NAMESPACE, "receipt");
 
 	@Getter
 	private final TypedEntityLinks<Order> orderLinks;
@@ -33,23 +33,20 @@ class PaymentLinks {
 	 * Creates a new {@link PaymentLinks} for the given {@link EntityLinks}.
 	 */
 	PaymentLinks(@NotNull EntityLinks entityLinks) {
-
-		Assert.notNull(entityLinks, "EntityLinks must not be null!");
-
 		this.orderLinks = entityLinks.forType(Order::getId);
 	}
 
 	/**
 	 * Returns the {@link Link} to point to the {@link Payment} for the given {@link Order}.
 	 */
-	Link getPaymentLink(@NotNull Order order) {
+	public Link getPaymentLink(@NotNull Order order) {
 		return orderLinks.linkForItemResource(order).slash(PAYMENT).withRel(PAYMENT_REL);
 	}
 
 	/**
 	 * Returns the {@link Link} to the {@link Payment.Receipt} of the given {@link Order}.
 	 */
-	Link getReceiptLink(@NotNull Order order) {
+	public Link getReceiptLink(@NotNull Order order) {
 		return orderLinks.linkForItemResource(order).slash(RECEIPT).withRel(RECEIPT_REL);
 	}
 }

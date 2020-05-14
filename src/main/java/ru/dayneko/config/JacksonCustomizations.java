@@ -105,15 +105,13 @@ class JacksonCustomizations {
 
 			static {
 
-				StringBuilder builder = new StringBuilder();
+				String builder = "(?=.)^" + // Start
+						"[A-Z]{3}?" + // 3-digit currency code
+						"\\s" + // single whitespace character
+						"(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+)?" + // digits with optional grouping by "," every 3)
+						"(\\.[0-9]{1,2})?$";
 
-				builder.append("(?=.)^"); // Start
-				builder.append("[A-Z]{3}?"); // 3-digit currency code
-				builder.append("\\s"); // single whitespace character
-				builder.append("(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+)?"); // digits with optional grouping by "," every 3)
-				builder.append("(\\.[0-9]{1,2})?$"); // End with a dot and two digits
-
-				MONEY_PATTERN = Pattern.compile(builder.toString());
+				MONEY_PATTERN = Pattern.compile(builder);// End with a dot and two digits
 			}
 
 			public MonetaryAmountSerializer() {

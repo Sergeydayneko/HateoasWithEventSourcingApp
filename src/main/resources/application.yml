@@ -1,2 +1,10 @@
 server:
   port: 8787
+
+spring:
+  data:
+    rest:
+      enable-enum-translation: true
+  jackson:
+    mapper:
+      infer-property-mutators: false

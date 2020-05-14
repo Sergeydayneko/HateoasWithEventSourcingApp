@@ -26,6 +26,12 @@ public class CreditCard extends AbstractEntity {
 	private Month expiryMonth;
 	private Year expiryYear;
 
+	protected void setExpirationDate(LocalDate date) {
+
+		this.expiryYear = Year.of(date.getYear());
+		this.expiryMonth = date.getMonth();
+	}
+
 	public boolean isValid() {
 		return isValid(LocalDate.now());
 	}
@@ -38,9 +44,5 @@ public class CreditCard extends AbstractEntity {
 		return LocalDate.of(expiryYear.getValue(), expiryMonth, 1);
 	}
 
-	protected void setExpirationDate(LocalDate date) {
 
-		this.expiryYear = Year.of(date.getYear());
-		this.expiryMonth = date.getMonth();
-	}
 }

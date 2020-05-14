@@ -6,6 +6,7 @@ public abstract class Constants {
         throw new IllegalStateException("Cant initiate this class");
     }
 
-    public static final String CURIE_NAMESPACE = "MyCurieName";
+    /* stands for short uri of resource */
+    public static final String CURIE_NAMESPACE = "sh";
 
 }
