@@ -24,6 +24,7 @@ public abstract class Payment extends AbstractEntity {
 	@JoinColumn(name = "rborder")
 	@OneToOne(cascade = CascadeType.MERGE)
 	private final Order order;
+
 	private final LocalDateTime paymentDate;
 
 	/**

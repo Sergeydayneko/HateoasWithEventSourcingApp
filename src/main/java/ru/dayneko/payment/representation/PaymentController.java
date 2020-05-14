@@ -18,6 +18,8 @@ import ru.dayneko.payment.model.Payment;
 import ru.dayneko.payment.service.PaymentService;
 
 import javax.money.MonetaryAmount;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Spring MVC controller to handle payments for an {@link Order}.
@@ -28,20 +30,17 @@ import javax.money.MonetaryAmount;
 @RequiredArgsConstructor
 class PaymentController {
 
-	private final @NonNull PaymentService paymentService;
-	private final @NonNull PaymentLinks paymentLinks;
+	@NonNull
+	private final PaymentService paymentService;
+
+	@NonNull
+	private final PaymentLinks paymentLinks;
 
 	/**
 	 * Accepts a payment for an {@link Order}
-	 *
-	 * @param order the {@link Order} to process the payment for. Retrieved from the path variable and converted into an
-	 *          {@link Order} instance by Spring Data's {@link DomainClassConverter}. Will be {@literal null} in case no
-	 *          {@link Order} with the given id could be found.
-	 * @param number the {@link CreditCardNumber} unmarshaled from the request payload.
-	 * @return
 	 */
 	@PutMapping(path = PaymentLinks.PAYMENT)
-	ResponseEntity<?> submitPayment(@PathVariable("id") Order order, @RequestBody PaymentForm ccn) {
+	ResponseEntity<?> submitPayment(@PathVariable("id") Order order, @Valid @RequestBody PaymentForm ccn) {
 
 		if (order == null || order.isPaid()) {
 			return ResponseEntity.notFound().build();
@@ -49,19 +48,16 @@ class PaymentController {
 
 		var payment = paymentService.pay(order, ccn.getNumber());
 
-		var model = new PaymentModel(order.getPrice(), payment.getCreditCard())
-				.add(paymentLinks.getOrderLinks().linkToItemResource(order));
+		var paymentModel = new PaymentModel(order.getPrice(), payment.getCreditCard())
+								.add(paymentLinks.getOrderLinks().linkToItemResource(order));
 
 		var paymentUri = paymentLinks.getPaymentLink(order).toUri();
 
-		return ResponseEntity.created(paymentUri).body(model);
+		return ResponseEntity.created(paymentUri).body(paymentModel);
 	}
 
 	/**
 	 * Shows the {@link Payment.Receipt} for the given order.
-	 *
-	 * @param order
-	 * @return
 	 */
 	@GetMapping(path = PaymentLinks.RECEIPT)
 	HttpEntity<?> showReceipt(@PathVariable("id") Order order) {
@@ -86,8 +82,8 @@ class PaymentController {
 			return ResponseEntity.notFound().build();
 		}
 
-		return paymentService.takeReceiptFor(order) //
-				.map(this::createReceiptResponse) //
+		return paymentService.takeReceiptFor(order)
+				.map(this::createReceiptResponse)
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED));
 	}
 
@@ -100,7 +96,7 @@ class PaymentController {
 		var orderLinks = paymentLinks.getOrderLinks();
 		var order = receipt.getOrder();
 
-		var model = new EntityModel<>(receipt) //
+		var model = new EntityModel<>(receipt)
 				.add(orderLinks.linkToItemResource(order));
 
 		if (!order.isTaken()) {
@@ -125,6 +121,8 @@ class PaymentController {
 	@Value
 	@RequiredArgsConstructor(onConstructor = @__(@JsonCreator))
 	static class PaymentForm {
+
+		@NotNull
 		CreditCardNumber number;
 	}
 }

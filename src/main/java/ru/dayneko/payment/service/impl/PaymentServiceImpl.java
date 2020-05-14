@@ -37,7 +37,7 @@ class PaymentServiceImpl implements PaymentService {
 	@Override
 	public CreditCardPayment pay(Order order, CreditCardNumber creditCardNumber) {
 
-		if (order.isPaid()) {
+		if (order == null || order.isPaid()) {
 			throw new PaymentException(order, "Order already paid!");
 		}
 
