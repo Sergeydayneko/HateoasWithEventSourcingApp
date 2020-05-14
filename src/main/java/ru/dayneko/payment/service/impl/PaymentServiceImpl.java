@@ -19,7 +19,6 @@ import java.util.Optional;
 /**
  * Implementation of {@link PaymentService} delegating persistence operations to {@link PaymentRepository} and
  * {@link CreditCardRepository}.
- * @author Stéphane Nicoll
  */
 @Service
 @Transactional
