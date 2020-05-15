@@ -7,7 +7,6 @@ import org.springframework.hateoas.mediatype.hal.HalLinkRelation;
 import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.hateoas.server.TypedEntityLinks;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import ru.dayneko.order.model.Order;
 import ru.dayneko.payment.model.Payment;
 

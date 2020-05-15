@@ -1,6 +1,8 @@
 package ru.dayneko.order.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.javamoney.moneta.Money;
 import ru.dayneko.core.AbstractAggregateRoot;
@@ -20,19 +22,20 @@ import java.util.List;
 @Getter
 @ToString(exclude = "lineItems")
 @Table(name = "RBOrder")
+@NoArgsConstructor
 public class Order extends AbstractAggregateRoot {
 
-	private final Location location;
-	private final LocalDateTime orderedDate;
+	private Location location;
+	private LocalDateTime orderedDate;
 	private Status status;
 
+	@Setter
 	@OrderColumn
 	@Column(unique = true)
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<LineItem> lineItems = new ArrayList<>();
+	private List<LineItem> lineItems = new ArrayList<>();
 
-	public Order(Collection<LineItem> lineItems, Location location) {
-
+	private Order(Collection<LineItem> lineItems, Location location) {
 		this.location = location == null ? Location.TAKE_AWAY : location;
 		this.status = Status.PAYMENT_EXPECTED;
 		this.lineItems.addAll(lineItems);

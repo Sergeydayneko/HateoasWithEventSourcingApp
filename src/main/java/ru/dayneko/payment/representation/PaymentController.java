@@ -8,7 +8,6 @@ import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.dayneko.order.model.Order;
 import ru.dayneko.payment.model.CreditCard;
@@ -22,9 +21,9 @@ import javax.validation.constraints.NotNull;
 /**
  * Spring MVC controller to handle payments for an {@link Order}.
  */
-@Controller
+@RestController
 @RequestMapping("/orders/{id}")
-@ExposesResourceFor(Payment.class)
+@ExposesResourceFor(Payment.class) // Hateoas
 @RequiredArgsConstructor
 class PaymentController {
 
@@ -38,7 +37,7 @@ class PaymentController {
 	 * Accepts a payment for an {@link Order}
 	 */
 	@PutMapping(path = PaymentLinks.PAYMENT)
-	ResponseEntity<?> submitPayment(@PathVariable("id") Order order, @Valid @RequestBody PaymentForm ccn) {
+	ResponseEntity<PaymentModel> submitPayment(@PathVariable("id") Order order, @Valid @RequestBody PaymentForm ccn) {
 
 		if (order == null || order.isPaid()) {
 			return ResponseEntity.notFound().build();
@@ -47,8 +46,9 @@ class PaymentController {
 		var payment = paymentService.pay(order, ccn.getNumber());
 
 		var paymentModel = new PaymentModel(order.getPrice(), payment.getCreditCard())
-								.add(paymentLinks.getOrderLinks().linkToItemResource(order));
+								.add(paymentLinks.getOrderLinks().linkToItemResource(order)); // add link for order
 
+		/* Location header for created resource */
 		var paymentUri = paymentLinks.getPaymentLink(order).toUri();
 
 		return ResponseEntity.created(paymentUri).body(paymentModel);
@@ -74,7 +74,7 @@ class PaymentController {
 	 * Takes the {@link Payment.Receipt} for the given {@link Order} and thus completes the process.
 	 */
 	@DeleteMapping(path = PaymentLinks.RECEIPT)
-	HttpEntity<?> takeReceipt(@PathVariable("id") Order order) {
+	HttpEntity<EntityModel<Payment.Receipt>> takeReceipt(@PathVariable("id") Order order) {
 
 		if (order == null || !order.isPaid()) {
 			return ResponseEntity.notFound().build();
