@@ -34,7 +34,7 @@ public class Order extends AbstractAggregateRoot {
 	private Client client;
 
 	@Setter
-	@OrderColumn
+	@OrderColumn(name = "orderIndex")
 	@Column(unique = true)
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<LineItem> lineItems = new ArrayList<>();
