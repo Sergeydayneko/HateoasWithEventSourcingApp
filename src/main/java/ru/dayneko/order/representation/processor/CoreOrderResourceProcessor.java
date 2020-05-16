@@ -15,30 +15,30 @@ import java.util.Objects;
  * {@link ResourceProcessor} implementation to add links to the {@link Order} representation that indicate that the
  * Order can be updated or cancelled as long as it has not been paid yet.
  */
-//@Component
-//@RequiredArgsConstructor
-//class CoreOrderResourceProcessor implements RepresentationModelProcessor<EntityModel<Order>> {
-//
-//	public static final String CANCEL_REL = "cancel";
-//	public static final String UPDATE_REL = "update";
-//
-//	private final @NonNull EntityLinks entityLinks;
-//
-//	@Override
-//	public EntityModel<Order> process(@NotNull EntityModel<Order> resource) {
-//
-//
-//		var typedEntityLinks = entityLinks.forType(Order::getId);
-//		var order = resource.getContent();
-//
-//		if (Objects.nonNull(order) && !order.isPaid()) {
-//
-//			var orderLink = typedEntityLinks.linkForItemResource(order);
-//
-//			resource.add(orderLink.withRel(CANCEL_REL));
-//			resource.add(orderLink.withRel(UPDATE_REL));
-//		}
-//
-//		return resource;
-//	}
-//}
+@Component
+@RequiredArgsConstructor
+class CoreOrderResourceProcessor implements RepresentationModelProcessor<EntityModel<Order>> {
+
+	private static final String CANCEL_REL = "cancel";
+	private static final String UPDATE_REL = "update";
+
+	private final @NonNull EntityLinks entityLinks;
+
+	@Override
+	public EntityModel<Order> process(@NotNull EntityModel<Order> resource) {
+
+
+		var typedEntityLinks = entityLinks.forType(Order::getId);
+		var order = resource.getContent();
+
+		if (Objects.nonNull(order) && !order.isPaid()) {
+
+			var orderLink = typedEntityLinks.linkForItemResource(order);
+
+			resource.add(orderLink.withRel(CANCEL_REL));
+			resource.add(orderLink.withRel(UPDATE_REL));
+		}
+
+		return resource;
+	}
+}

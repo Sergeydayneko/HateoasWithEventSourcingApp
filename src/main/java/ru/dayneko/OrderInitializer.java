@@ -6,6 +6,7 @@ import org.javamoney.moneta.Money;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import ru.dayneko.order.model.Client;
 import ru.dayneko.order.model.LineItem;
 import ru.dayneko.order.model.Order;
 import ru.dayneko.order.repository.OrderRepository;
@@ -36,9 +37,12 @@ class OrderInitializer {
 			return;
 		}
 
-		var javaChip = new LineItem("Java Chip", Money.of(4.20, EURO));
-		var cappuchino = new LineItem("Cappuchino", Money.of(3.20, EURO));
+		Client client_1 = new Client("Jack");
+		Client client_2 = new Client("Sonia");
 
-		orders.saveAll(List.of(new Order(javaChip), new Order(cappuchino)));
+		var javaChip = new LineItem("Java Chip", Money.of(4.20, EURO));
+		var cappuccino = new LineItem("Cappuccino", Money.of(3.20, EURO));
+
+		orders.saveAll(List.of(new Order(client_1, javaChip), new Order(client_2, cappuccino)));
 	}
 }

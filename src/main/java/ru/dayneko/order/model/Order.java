@@ -1,5 +1,6 @@
 package ru.dayneko.order.model;
 
+import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +30,9 @@ public class Order extends AbstractAggregateRoot {
 	private LocalDateTime orderedDate;
 	private Status status;
 
+	@Nullable
+	private Client client;
+
 	@Setter
 	@OrderColumn
 	@Column(unique = true)
@@ -42,15 +46,27 @@ public class Order extends AbstractAggregateRoot {
 		this.orderedDate = LocalDateTime.now();
 	}
 
+	private Order(Collection<LineItem> lineItems, Location location, Client client) {
+		this.client = client;
+		this.location = location == null ? Location.TAKE_AWAY : location;
+		this.status = Status.PAYMENT_EXPECTED;
+		this.lineItems.addAll(lineItems);
+		this.orderedDate = LocalDateTime.now();
+	}
+
 	public Order(LineItem... items) {
 		this(List.of(items), null);
 	}
 
+	public Order(Client client, LineItem... items) {
+		this(List.of(items), null, client);
+	}
+
 	public MonetaryAmount getPrice() {
 
-		return lineItems.stream().//
-				map(LineItem::getPrice).//
-				reduce(MonetaryAmount::add).orElse(Money.of(0.0, "EUR"));
+		return lineItems.stream()
+                .map(LineItem::getPrice)
+                .reduce(MonetaryAmount::add).orElse(Money.of(0.0, "EUR"));
 	}
 
 	/**
@@ -123,29 +139,14 @@ public class Order extends AbstractAggregateRoot {
 	 */
 	public enum Status {
 
-		/**
-		 * Placed, but not payed yet. Still changeable.
-		 */
 		PAYMENT_EXPECTED,
 
-		/**
-		 * Was payed. No changes allowed to it anymore.
-		 */
 		PAID,
 
-		/**
-		 * Currently processed.
-		 */
 		PREPARING,
 
-		/**
-		 * Ready to be picked up by the customer.
-		 */
 		READY,
 
-		/**
-		 * Was completed.
-		 */
 		TAKEN
 	}
 }

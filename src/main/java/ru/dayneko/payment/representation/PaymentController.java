@@ -1,31 +1,29 @@
 package ru.dayneko.payment.representation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.*;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.dayneko.order.model.Order;
-import ru.dayneko.payment.model.CreditCard;
-import ru.dayneko.payment.model.CreditCardNumber;
 import ru.dayneko.payment.model.Payment;
+import ru.dayneko.payment.representation.model.PaymentForm;
+import ru.dayneko.payment.representation.model.PaymentModel;
 import ru.dayneko.payment.service.PaymentService;
-import javax.money.MonetaryAmount;
+
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
- * Spring MVC controller to handle payments for an {@link Order}.
+ * Controller for payments for an {@link Order}.
  */
 @RestController
 @RequestMapping("/orders/{id}")
 @ExposesResourceFor(Payment.class) // Hateoas
 @RequiredArgsConstructor
-class PaymentController {
+public class PaymentController {
 
 	@NonNull
 	private final PaymentService paymentService;
@@ -58,15 +56,15 @@ class PaymentController {
 	 * Shows the {@link Payment.Receipt} for the given order.
 	 */
 	@GetMapping(path = PaymentLinks.RECEIPT)
-	HttpEntity<?> showReceipt(@PathVariable("id") Order order) {
+	HttpEntity<EntityModel<Payment.Receipt>> showReceipt(@PathVariable("id") Order order) {
 
 		if (order == null || !order.isPaid() || order.isTaken()) {
 			return ResponseEntity.notFound().build();
 		}
 
-		return paymentService.getPaymentFor(order) //
-				.map(Payment::getReceipt) //
-				.map(this::createReceiptResponse) //
+		return paymentService.getPaymentFor(order)
+				.map(Payment::getReceipt)
+				.map(this::createReceiptResponse)
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
@@ -102,25 +100,5 @@ class PaymentController {
 		}
 
 		return ResponseEntity.ok(model);
-	}
-
-	/**
-	 * EntityModel implementation for payment results.
-	 */
-	@Data
-	@EqualsAndHashCode(callSuper = true)
-	@RequiredArgsConstructor
-	static class PaymentModel extends RepresentationModel<PaymentModel> {
-
-		private final MonetaryAmount amount;
-		private final CreditCard creditCard;
-	}
-
-	@Value
-	@RequiredArgsConstructor(onConstructor = @__(@JsonCreator))
-	static class PaymentForm {
-
-		@NotNull
-		CreditCardNumber number;
 	}
 }

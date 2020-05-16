@@ -32,6 +32,8 @@ public class PaymentLinks {
 	 * Creates a new {@link PaymentLinks} for the given {@link EntityLinks}.
 	 */
 	PaymentLinks(@NotNull EntityLinks entityLinks) {
+		/* forType consumes identity of entity resource.
+		   It could be any unique field(ID is the best choice) */
 		this.orderLinks = entityLinks.forType(Order::getId);
 	}
 
